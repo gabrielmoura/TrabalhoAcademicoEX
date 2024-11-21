@@ -68,7 +68,7 @@ contribuir com uma solução útil para a comunidade local.
 - **Código-fonte**: O repositório do projeto está disponível no
   GitHub: [Taxi Calc no GitHub](https://github.com/gabrielmoura/TrabalhoAcademicoEX)
 - **Aplicativo**: A versão do aplicativo pode ser
-  baixada [aqui](https://github.com/gabrielmoura/TrabalhoAcademicoEX/releases/tag/v1.0).
+  baixada [aqui](https://github.com/gabrielmoura/TrabalhoAcademicoEX/releases/tag/0.9.1).
 - **Questionário de Satisfação**: O questionário de satisfação está
   disponível [aqui](https://github.com/gabrielmoura/TrabalhoAcademicoEX).
 - **Informações Adicionais**: Outras informações podem ser encontradas em [DETAILED.md](DETAILED.md).
