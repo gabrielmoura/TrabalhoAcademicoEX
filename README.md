@@ -76,3 +76,11 @@ contribuir com uma solução útil para a comunidade local.
 ## Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+
+## Capturas de Tela
+
+| --------------     | ------------------ | ---------------    |
+|--------------------|--------------------|--------------------|
+| ![](.assets/1.png) | ![](.assets/2.png) | ![](.assets/3.png) |
+| ![](.assets/4.png) | ![](.assets/5.png) | ![](.assets/6.png) |
+| ![](.assets/7.png) | ![](.assets/8.png) | ![](.assets/9.png) |

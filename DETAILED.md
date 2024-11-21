@@ -22,6 +22,7 @@ A organização das pastas no diretório `src/` segue o seguinte padrão para fa
 - **`screens/`**: Contém as telas principais da aplicação.
 - **`services/`**: Implementa a lógica de serviços, como chamadas a APIs.
 - **`store/`**: Configuração do Zustand para gerenciamento de estado global com persistência via AsyncStorage.
+- **`types/`**: Define tipos e interfaces utilizados em todo o projeto.
 - **`utils/`**: Contém funções utilitárias que auxiliam nas operações gerais do projeto.
 
 ## Fluxos Funcionais
