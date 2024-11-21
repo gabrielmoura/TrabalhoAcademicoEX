@@ -1,5 +1,5 @@
 import {StateCreator} from "zustand";
-import {GeoLocation} from "@app/services/geolocation";
+import {GeoLocation} from "@app/types/geoResponseType";
 
 interface Flow {
     normalFlow: boolean;
@@ -8,7 +8,7 @@ interface Flow {
 }
 
 interface CalcPriceState {
-    origin?: GeoLocation;
+    origin?: Geolocation;
     destination?: GeoLocation;
     distance: number;
     estimatedTime: string;
@@ -23,7 +23,7 @@ interface CalcPriceActions {
     setNormalFlow: (normalFlow: boolean) => void;
     setSearchText: (searchText: string) => void;
     setModalVisible: (modalVisible: boolean) => void;
-    reset: () => void;
+    resetFlow: () => void;
     closeWithoutSelection: () => void;
 }
 
@@ -31,6 +31,8 @@ export type CalcPriceStore = CalcPriceState & CalcPriceActions;
 const defaultValues: CalcPriceState = {
     distance: 0,
     estimatedTime: "",
+    origin: undefined,
+    destination: undefined,
     flow: {
         normalFlow: true,
         modalVisible: true,
@@ -43,18 +45,18 @@ export const createCalcPriceSlice: StateCreator<
     []
 > = (set, get) => ({
     ...defaultValues,
-    setDistance: (distance) => set({distance},false,"setDistance"),
-    setEstimatedTime: (estimatedTime) => set({estimatedTime},false,"setEstimatedTime"),
-    setOrigin: (origin) => set({origin},false,"setOrigin"),
-    setDestination: (destination) => set({destination},false,"setDestination"),
+    setDistance: (distance) => set({distance}, false, "setDistance"),
+    setEstimatedTime: (estimatedTime) => set({estimatedTime}, false, "setEstimatedTime"),
+    setOrigin: (origin) => set({origin}, false, "setOrigin"),
+    setDestination: (destination) => set({destination}, false, "setDestination"),
     setNormalFlow: (normalFlow) =>
-        set((state) => ({flow: {...state.flow, normalFlow}}),false,"setNormalFlow"),
+        set((state) => ({flow: {...state.flow, normalFlow}}), false, "setNormalFlow"),
     setSearchText: (searchText) =>
-        set((state) => ({flow: {...state.flow, searchText}}),false,"setSearchText"),
+        set((state) => ({flow: {...state.flow, searchText}}), false, "setSearchText"),
     setModalVisible: (modalVisible) =>
-        set((state) => ({flow: {...state.flow, modalVisible}}),false,"setModalVisible"),
-    reset: () => set(defaultValues,false,"reset"),
+        set((state) => ({flow: {...state.flow, modalVisible}}), false, "setModalVisible"),
+    resetFlow: () => set({...defaultValues}, false, "resetFlow"),
     closeWithoutSelection: () => {
-        set({flow: {...get().flow, normalFlow: false, modalVisible: false}},false,"closeWithoutSelection");
+        set({flow: {...get().flow, normalFlow: false, modalVisible: true}}, false, "closeWithoutSelection");
     },
 });

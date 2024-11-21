@@ -1,9 +1,10 @@
 // Componente de modal para seleção de endereço
 import useCalcPriceStore from "@app/store/calcPriceFlow";
-import {GeoLocation} from "@app/services/geolocation";
+
 import styled from "@emotion/native";
 import {Dispatch} from "react";
 import {Modal, Text, VirtualizedList} from "react-native";
+import {GeoLocation} from "@app/types/geoResponseType";
 
 export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalProps) {
     // const [isModalVisible, setModalVisible] = useState(true);
@@ -13,7 +14,8 @@ export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalPr
     // Define o item selecionado e fecha o modal
     const handleSelectItem = (item: GeoLocation) => {
         onSelectResult(item);
-        setModalVisible(false);
+        // setModalVisible(false);
+
     };
 
     // Função para obter o item na lista

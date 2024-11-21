@@ -1,15 +1,5 @@
 import {SQLiteDatabase} from "expo-sqlite";
-
-export interface RaceRecord {
-    id?: number;
-    distance: number;
-    time: number;
-    price: number;
-    origin?: string;
-    destination?: string;
-    note?: string;
-    createdAt?: string;
-}
+import {RaceRecord} from "@app/types/RaceRecordType";
 
 const TABLE_NAME = "race_records";
 

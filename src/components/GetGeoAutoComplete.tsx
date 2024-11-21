@@ -21,8 +21,7 @@ interface GeoAutoCompleteProps {
 export function GetGeoAutoComplete({placeholder, onSelectResult}: GeoAutoCompleteProps) {
     const apiKey = useSessionStore((state: ConfigStore) => state.ApiKey); // Obter chave da API do store
     const [searchText, setSearchText] = useState<string>(''); // Texto de entrada do usuário
-    // const searchText= useCalcPriceStore((state) => state.flow.searchText);
-    // const setSearchText = useCalcPriceStore((state) => state.setSearchText);
+
 
     // const [normalFlow, setNormalFlow] = useState<boolean>(true); // Fluxo normal de busca
     const normalFlow = useCalcPriceStore((state) => state.flow.normalFlow);

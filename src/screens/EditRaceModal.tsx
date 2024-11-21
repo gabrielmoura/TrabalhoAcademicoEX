@@ -1,21 +1,13 @@
 import {useNavigation, useRoute} from "@react-navigation/native";
 import {useSQLiteContext} from "expo-sqlite";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {deleteRaceRecord, getRaceRecord, RaceRecord, updateRaceRecord} from "@app/services/raceRecord";
+import {deleteRaceRecord, getRaceRecord, updateRaceRecord} from "@app/services/raceRecord";
 import React, {useState} from "react";
 import {ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import {Button, ButtonDanger} from "@components/Button";
-import {RaceRecordContext} from "@app/context/RaceRecordContext";
+import {RaceRecord} from "@app/types/RaceRecordType";
 
 export function EditRaceModal() {
-    return (
-        <RaceRecordContext>
-            <EditRace/>
-        </RaceRecordContext>
-    )
-}
-
-export function EditRace() {
     const db = useSQLiteContext();
     const navigator = useNavigation();
     const {params: {id}} = useRoute();
@@ -50,12 +42,12 @@ export function EditRace() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Edit Race Record</Text>
+            <Text style={styles.title}>Editar registro de corrida</Text>
             {mut.isError && <Text style={styles.textError}>{mut.error?.toString()}</Text>}
 
             <TextInput
                 style={styles.input}
-                placeholder="Distance (meters)"
+                placeholder="Distância (metros)"
                 keyboardType="numeric"
 
                 value={raceRecord?.distance?.toString()}
@@ -67,7 +59,7 @@ export function EditRace() {
 
             <TextInput
                 style={styles.input}
-                placeholder="Time (seconds)"
+                placeholder="Tempo (segundos)"
                 keyboardType="numeric"
                 value={raceRecord?.time?.toString()}
                 onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, time: parseFloat(value)}))}
@@ -75,7 +67,7 @@ export function EditRace() {
 
             <TextInput
                 style={styles.input}
-                placeholder="Price ($)"
+                placeholder="Preço (R$)"
                 keyboardType="numeric"
                 value={raceRecord?.price?.toString()}
                 onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, price: parseFloat(value)}))}
@@ -83,21 +75,21 @@ export function EditRace() {
 
             <TextInput
                 style={styles.input}
-                placeholder="Origin"
+                placeholder="Origem"
                 value={raceRecord?.origin?.toString()}
                 onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, origin: value}))}
             />
 
             <TextInput
                 style={styles.input}
-                placeholder="Destination"
+                placeholder="Destino"
                 value={raceRecord?.destination?.toString()}
                 onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, destination: value}))}
             />
 
             <TextInput
                 style={[styles.input, styles.textArea]}
-                placeholder="Notes"
+                placeholder="Notas"
                 multiline
                 numberOfLines={4}
                 value={raceRecord?.note?.toString()}
@@ -106,11 +98,11 @@ export function EditRace() {
 
             <View style={styles.containerButtons}>
                 {mut?.isPending ? <ActivityIndicator color="#000"/> : (<>
-                    <Button title="Save"
+                    <Button title="Salvar"
                             onPress={() => mut.mutate()}/>
-                    <Button title="Cancel"
+                    <Button title="Cancelar"
                             onPress={() => navigator.goBack()} style={styles.cancelButton}/>
-                    <ButtonDanger title="Delete"
+                    <ButtonDanger title="Deletar"
                                   onPress={() => deleteMutation.mutate()}/>
                 </>)}
 

@@ -1,11 +1,28 @@
-import {Text} from "react-native";
+import {Alert, Text} from "react-native";
 import useSessionStore from "@app/store/sessionStore";
 
 import {ControlForm, FlexCol, Input, Label, ScrollView} from "@components/Common";
 import {ConfigStore, TaxToCalc} from "@app/store/slice/config";
-import {Button} from "@components/Button";
+import {Button, ButtonDanger} from "@components/Button";
+import styled from "@emotion/native";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {flushDb} from "@app/services/raceRecord";
+import {useSQLiteContext} from "expo-sqlite";
+
+const ContainerButton = styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+    padding-top: 10%;
+    padding-bottom: 10%;
+`;
 
 export function ConfigPage() {
+    const db = useSQLiteContext();
+    const clientQuery = useQueryClient();
     const setModel = useSessionStore((state: ConfigStore) => state.setModel);
     const model = useSessionStore((state: ConfigStore) => state.model);
     const setYear = useSessionStore((state: ConfigStore) => state.setYear);
@@ -23,6 +40,21 @@ export function ConfigPage() {
     const tax: TaxToCalc = useSessionStore((state: ConfigStore) => state.Tax!);
     const resetToDefault = useSessionStore((state: ConfigStore) => state.resetToDefault);
 
+
+    const flushDB = useMutation({
+        mutationKey: ['flushDb'],
+        onMutate: async () => flushDb(db),
+        onSuccess: async () => {
+            await clientQuery.invalidateQueries({queryKey: ['raceRecords']});
+            await clientQuery.invalidateQueries({queryKey: ['raceRecord']});
+        }
+    })
+
+    function handleFlushDB() {
+        flushDB.mutate()
+        Alert.alert("Sucesso", 'Banco de dados deletado com sucesso')
+    }
+
     return (
         <ScrollView>
             <FlexCol>
@@ -30,7 +62,6 @@ export function ConfigPage() {
                 <Text>Modelo: {model}</Text>
                 <Text>Ano: {year}</Text>
 
-                <Button title={"Restaurar Padrão"} onPress={() => resetToDefault()}/>
 
                 <ControlForm>
                     <Label>Modelo</Label>
@@ -83,6 +114,14 @@ export function ConfigPage() {
                     />
 
                 </ControlForm>
+
+                <ContainerButton>
+                    <Button title={"Restaurar Padrão"} onPress={() => resetToDefault()}/>
+                    <ButtonDanger title={"Deletar Banco"} onLongPress={() => handleFlushDB()}
+                                  onPress={() => Alert.alert("Aviso", "Segure o botão para deletar o banco de dados.\nEsta ação não pode ser desfeita.")}
+                    />
+                </ContainerButton>
+
             </FlexCol>
         </ScrollView>
     );

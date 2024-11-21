@@ -7,7 +7,7 @@ export function RaceRecordContext({children}) {
     return (
         <Suspense fallback={<Text>Erro ao processar</Text>}>
             <SQLiteProvider databaseName="test.db" onInit={migrateDbIfNeeded} useSuspense>
-                <Header/>
+                {/*<Header/>*/}
                 {children}
             </SQLiteProvider>
         </Suspense>

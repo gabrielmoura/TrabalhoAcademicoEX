@@ -1,5 +1,5 @@
 import {useMutation} from "@tanstack/react-query";
-import {calculatePrice, DistanceResponse, getDistance} from "@app/services/geolocation";
+import {calculatePrice, getDistance} from "@app/services/geolocation";
 import useSessionStore from "@app/store/sessionStore";
 import {ConfigStore} from "@app/store/slice/config";
 import {formatTime} from "@app/util/helper";
@@ -8,6 +8,7 @@ import {GetGeoAutoComplete} from "@components/GetGeoAutoComplete";
 import {Button} from "@components/Button";
 import {Alert} from "react-native";
 import useCalcPriceStore from "@app/store/calcPriceFlow";
+import {DistanceResponse} from "@app/types/distanceResponseType";
 
 
 // Layout Components
@@ -61,40 +62,56 @@ const Result = styled.Text`
     color: #444;
     margin-top: 12px;
 `;
+const ResultError = styled.Text`
+    font-size: 16px;
+    color: red;
+    margin-top: 12px;
+`;
+const ContainerButton = styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+    padding-top: 10%;
+    padding-bottom: 10%;
+`;
 
 // Main Component
 export function PriceCalculator() {
     // State variables
     // const [origin, setOrigin] = useState<GeoLocation | null>(null);
     // const [destination, setDestination] = useState<GeoLocation | null>(null);
-    const origin = useCalcPriceStore((state) => state.origin);
+    const origin = useCalcPriceStore((state) => state.origin!);
     const setOrigin = useCalcPriceStore((state) => state.setOrigin);
-    const destination = useCalcPriceStore((state) => state.destination);
+    const destination = useCalcPriceStore((state) => state.destination!);
     const setDestination = useCalcPriceStore((state) => state.setDestination);
 
 
-    const apiKey = useSessionStore((state: ConfigStore) => state.ApiKey);
+    const apiKey = useSessionStore((state: ConfigStore) => state.ApiKey!);
     const taxConfig = useSessionStore((state: ConfigStore) => state.Tax!);
     const distance = useCalcPriceStore((state) => state.distance);
     const setDistance = useCalcPriceStore((state) => state.setDistance);
     const estimatedTime = useCalcPriceStore((state) => state.estimatedTime);
     const setEstimatedTime = useCalcPriceStore((state) => state.setEstimatedTime);
+    const resetFlow = useCalcPriceStore((state) => state.resetFlow);
     // const [distance, setDistance] = useState<number>(0);
     // const [estimatedTime, setEstimatedTime] = useState<string>("");
 
 
     // Mutation to calculate distance and time
     const calculateRoute = useMutation({
-        mutationKey: ["calculate-price", origin, destination],
+        mutationKey: ["calculate-price", {origin}, {destination}],
         mutationFn: async () =>
             getDistance({
-                origin: {lon: origin!.lon, lat: origin!.lat},
-                destination: {lon: destination!.lon, lat: destination!.lat},
-                apiKey: apiKey!,
+                origin: {lon: origin.lon, lat: origin.lat},
+                destination: {lon: destination.lon, lat: destination.lat},
+                apiKey: apiKey,
             }),
         onSuccess: (data: DistanceResponse) => {
-            setDistance(data.features[0].properties.distance);
-            setEstimatedTime(formatTime(data.features[0].properties.time));
+            setDistance(data.results[0].distance);
+            setEstimatedTime(formatTime(data.results[0].time));
         },
     });
 
@@ -103,7 +120,7 @@ export function PriceCalculator() {
             return Alert.alert('Selecione um endereço de origem e destino');
         }
 
-        calculateRoute.mutate();
+        return calculateRoute.mutate();
     }
 
     return (
@@ -111,7 +128,7 @@ export function PriceCalculator() {
             <Title>Calculadora de Preços</Title>
 
             {/* Show selected locations */}
-            <Subtitle>Origem: {origin?.formatted?.trim() || "Não selecionada"}</Subtitle>
+            <Subtitle>Origem: {origin?.formatted?.trim() || "Não selecionado"}</Subtitle>
             <Subtitle>Destino: {destination?.formatted?.trim() || "Não selecionado"}</Subtitle>
 
             <Form>
@@ -137,17 +154,29 @@ export function PriceCalculator() {
                     </>
                 )}
 
-                {/* Button to calculate price */}
-                <Button onPress={() => processDistance()} size={'large'}>
-                    <ButtonText>Calcular</ButtonText>
-                </Button>
+                <ContainerButton>
+                    <Button onPress={() => processDistance()} size={'large'}
+                            title="Calcular"
+                            loading={calculateRoute.isPending}
+                            disabled={!origin || !destination}>
+                    </Button>
+                    <Button onPress={() => resetFlow()} size={'large'}
+                            title="Limpar"
+                    >
+                    </Button>
+                </ContainerButton>
 
                 {/* Display results */}
                 {calculateRoute.isSuccess && (
                     <>
                         <Result>Preço Estimado: R$ {calculatePrice(distance, taxConfig)?.toFixed(2)}</Result>
                         <Result>Tempo Estimado: {estimatedTime}</Result>
+                        <Result>Distância: {distance}m</Result>
                     </>
+                )}
+                {calculateRoute.isError && (
+                    <ResultError>Erro ao
+                        calcular: {calculateRoute.error.toString()}</ResultError>
                 )}
             </Form>
         </Container>

@@ -1,19 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import styled, {css} from "@emotion/native";
-import {RaceRecordContext} from "@app/context/RaceRecordContext";
 import {FlatList, Text, TouchableOpacity} from "react-native";
 import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
-import {getRaceRecords, RaceRecord} from "@app/services/raceRecord";
+import {getRaceRecords} from "@app/services/raceRecord";
 import {useQuery} from "@tanstack/react-query";
-
-export function RaceRecordPage() {
-    return (
-        <RaceRecordContext>
-            <List/>
-        </RaceRecordContext>
-    );
-}
+import {RaceRecord} from "@app/types/RaceRecordType";
 
 const Title = styled.Text`
     font-size: 24px;
@@ -32,7 +24,7 @@ const EmptyMessage = styled.Text`
     margin-top: 20px;
 `
 
-function List() {
+export function RaceRecordPage() {
     const db = useSQLiteContext();
 
     const {data} = useQuery({
@@ -64,9 +56,9 @@ function CardRecord({item}: { item: RaceRecord }) {
         >
             <Card>
                 <CardText>ID: {item.id}</CardText>
-                <CardText>Distância: {item.distance} km</CardText>
-                <CardText>Tempo: {item.time}</CardText>
-                <CardText>Data: {item.createdAt}</CardText>
+                <CardText>Distância: {item.distance} m</CardText>
+                <CardText>Tempo: {item.time} s</CardText>
+                <CardText>Data: {item.createdAt?.toString()}</CardText>
                 <CardText>Preço: R${item.price}</CardText>
                 <CardText>Nota: {item.note}</CardText>
             </Card>

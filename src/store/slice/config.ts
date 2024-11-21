@@ -61,15 +61,15 @@ export const createConfigSlice: StateCreator<
     []
 > = (set, get) => ({
     ...defaultConfig,
-    setModel: (model) => set({model}),
-    setYear: (year) => set({year}),
-    setColor: (color) => set({color}),
+    setModel: (model) => set({model}, false, "setModel"),
+    setYear: (year) => set({year}, false, "setYear"),
+    setColor: (color) => set({color}, false, "setColor"),
 
-    setBaseAm: (base) => set({Tax: {Am: {base: base}}}),
-    setBasePm: (base) => set({Tax: {Pm: {base: base}}}),
+    setBaseAm: (base) => set({Tax: {Am: {base: base}}}, false, "setBaseAm"),
+    setBasePm: (base) => set({Tax: {Pm: {base: base}}}, false, "setBasePm"),
 
-    setKmPriceAm: (kmPrice) => set({Tax: {Am: {kmPrice: kmPrice}}}),
-    setKmPricePm: (kmPrice) => set({Tax: {Pm: {kmPrice: kmPrice}}}),
-    setApiKey: (apiKey) => set({ApiKey: apiKey}),
-    resetToDefault: () => set(defaultConfig),
+    setKmPriceAm: (kmPrice) => set({Tax: {Am: {kmPrice: kmPrice}}}, false, "setKmPriceAm"),
+    setKmPricePm: (kmPrice) => set({Tax: {Pm: {kmPrice: kmPrice}}}, false, "setKmPricePm"),
+    setApiKey: (apiKey) => set({ApiKey: apiKey}, false, "setApiKey"),
+    resetToDefault: () => set(defaultConfig, false, "resetToDefault"),
 });
