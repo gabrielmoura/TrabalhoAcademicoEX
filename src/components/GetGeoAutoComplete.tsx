@@ -57,9 +57,9 @@ export function GetGeoAutoComplete({placeholder, onSelectResult}: GeoAutoComplet
                 setNormalFlow(true)
             }}>
                 {fetchSuggestions.isPending ? (
-                    <ActivityIndicator color="#000"/>
+                    <ActivityIndicator color="#000" size={35}/>
                 ) : (
-                    <FontAwesome name="search" size={20} color="#000"/>
+                    <FontAwesome name="search" size={35} color="#000"/>
                 )}
             </TouchableOpacity>
         </SearchInputContainer>

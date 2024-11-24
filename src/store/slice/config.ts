@@ -18,6 +18,7 @@ interface ConfigState {
     color?: string;
     Tax?: TaxToCalc;
     ApiKey?: string;
+    language?: string;
 }
 
 interface ConfigActions {
@@ -34,7 +35,7 @@ interface ConfigActions {
     setApiKey: (apiKey: string) => void;
 
     resetToDefault: () => void;
-
+    setLanguage: (language: string) => void;
 }
 
 
@@ -52,6 +53,7 @@ const defaultConfig: ConfigState = {
         }
     },
     ApiKey: "352d85cecc514447aab8a2941b473f52",
+    language: "pt",
 }
 
 export type ConfigStore = ConfigState & ConfigActions;
@@ -72,4 +74,5 @@ export const createConfigSlice: StateCreator<
     setKmPricePm: (kmPrice) => set({Tax: {Pm: {kmPrice: kmPrice}}}, false, "setKmPricePm"),
     setApiKey: (apiKey) => set({ApiKey: apiKey}, false, "setApiKey"),
     resetToDefault: () => set(defaultConfig, false, "resetToDefault"),
+    setLanguage: (language) => set({language}, false, "setLanguage"),
 });

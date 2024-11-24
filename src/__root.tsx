@@ -6,6 +6,7 @@ import {StyledComponent} from "@app/__style";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import Navigation from "@app/_navigation";
 import {RaceRecordContext} from "@app/context/RaceRecordContext";
+import {TranslationProvider} from "@app/context/TranslationProvicerContext";
 
 
 export default function App() {
@@ -14,7 +15,9 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
             <StyledComponent>
                 <RaceRecordContext>
-                    <Navigation/>
+                    <TranslationProvider>
+                        <Navigation/>
+                    </TranslationProvider>
                 </RaceRecordContext>
             </StyledComponent>
         </QueryClientProvider>

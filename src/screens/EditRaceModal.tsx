@@ -3,24 +3,53 @@ import {useSQLiteContext} from "expo-sqlite";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {deleteRaceRecord, getRaceRecord, updateRaceRecord} from "@app/services/raceRecord";
 import React, {useState} from "react";
-import {ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
-import {Button, ButtonDanger} from "@components/Button";
-import {RaceRecord} from "@app/types/RaceRecordType";
+import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Button} from "@components/Button";
+import {NumberInput, TextArea, TextInput} from "@components/CommonInput";
 
 export function EditRaceModal() {
     const db = useSQLiteContext();
-    const navigator = useNavigation();
     const {params: {id}} = useRoute();
-    const clientQuery = useQueryClient()
 
     const {data, isLoading} = useQuery({
         queryKey: ["raceRecord", {id}],
         queryFn: async () => getRaceRecord(db, id),
     })
-    const [raceRecord, setRaceRecord] = useState<RaceRecord>(data!)
+
+    if (isLoading) {
+        return <ActivityIndicator color="#000"/>
+    }
+
+    return <FormRace data={data} id={id}/>
+}
+
+function FormRace({data, id}) {
+    if (data?.id !== id) {
+        return <Text style={styles.textError}>Registro não encontrado</Text>
+    }
+    const clientQuery = useQueryClient()
+    const db = useSQLiteContext();
+    const navigator = useNavigation();
+
+    const [price, setPrice] = useState<number>(data.price);
+    const [time, setTime] = useState<number>(data.time);
+    const [distance, setDistance] = useState<number>(data.distance);
+    const [notes, setNotes] = useState<string>(data.note);
+    const [origin, setOrigin] = useState<string>(data.origin);
+    const [destination, setDestination] = useState<string>(data.destination);
+
 
     const mut = useMutation({
-        mutationFn: async () => updateRaceRecord(db, raceRecord!),
+        mutationFn: async () => updateRaceRecord(db, {
+            id,
+            origin: origin!,
+            destination: destination!,
+            note: notes!,
+            price: price!,
+            time: time!,
+            distance: distance!
+
+        }),
         onSuccess: async () => {
             await clientQuery.invalidateQueries({queryKey: ['raceRecords']});
             return navigator.goBack();
@@ -35,66 +64,31 @@ export function EditRaceModal() {
             return navigator.goBack()
         },
     })
-
-    if (isLoading) {
-        return <ActivityIndicator color="#000"/>
-    }
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>Editar registro de corrida</Text>
             {mut.isError && <Text style={styles.textError}>{mut.error?.toString()}</Text>}
 
-            <TextInput
-                style={styles.input}
-                placeholder="Distância (metros)"
-                keyboardType="numeric"
+            <NumberInput onValueChange={setDistance} placeholder="Distância (metros)" prefix='Distância'
+                         defaultValue={distance}/>
 
-                value={raceRecord?.distance?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({
-                    ...prev,
-                    distance: parseFloat(value)
-                }))}
-            />
+            <NumberInput onValueChange={setTime} placeholder="Tempo (segundos)" prefix='Tempo' defaultValue={time}/>
+
+            <NumberInput onValueChange={setPrice} prefix='R$' defaultValue={price}/>
 
             <TextInput
-                style={styles.input}
-                placeholder="Tempo (segundos)"
-                keyboardType="numeric"
-                value={raceRecord?.time?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, time: parseFloat(value)}))}
-            />
-
-            <TextInput
-                style={styles.input}
-                placeholder="Preço (R$)"
-                keyboardType="numeric"
-                value={raceRecord?.price?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, price: parseFloat(value)}))}
-            />
-
-            <TextInput
-                style={styles.input}
                 placeholder="Origem"
-                value={raceRecord?.origin?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, origin: value}))}
+                onValueChange={setOrigin}
+                defaultValue={origin}
             />
 
             <TextInput
-                style={styles.input}
                 placeholder="Destino"
-                value={raceRecord?.destination?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, destination: value}))}
+                onValueChange={setDestination}
+                defaultValue={destination}
             />
 
-            <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Notas"
-                multiline
-                numberOfLines={4}
-                value={raceRecord?.note?.toString()}
-                onChangeText={(value) => setRaceRecord((prev: RaceRecord) => ({...prev, note: value}))}
-            />
+            <TextArea numberOfLines={4} placeholder='Notas' onValueChange={setNotes} defaultValue={notes}/>
 
             <View style={styles.containerButtons}>
                 {mut?.isPending ? <ActivityIndicator color="#000"/> : (<>
@@ -102,10 +96,10 @@ export function EditRaceModal() {
                             onPress={() => mut.mutate()}/>
                     <Button title="Cancelar"
                             onPress={() => navigator.goBack()} style={styles.cancelButton}/>
-                    <ButtonDanger title="Deletar"
-                                  onPress={() => deleteMutation.mutate()}/>
+                    <Button title="Deletar"
+                            variant='warning'
+                            onPress={() => deleteMutation.mutate()}/>
                 </>)}
-
             </View>
         </ScrollView>
 

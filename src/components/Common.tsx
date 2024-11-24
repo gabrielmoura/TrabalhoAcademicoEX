@@ -1,17 +1,18 @@
 import styled from "@emotion/native";
 
-export const FlexCol = styled.View`
+export const Flex = styled.View<{
+    direction?: "row" | "column";
+    justify?: "space-between" | "center" | "flex-start" | "flex-end";
+    align?: "center" | "flex-start" | "flex-end";
+    gap?: number;
+}>`
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: ${(props) => props.direction || "column"};
+    justify-content: ${(props) => props.justify || "center"};
+    align-items: ${(props) => props.align || "center"};
+    gap: ${(props) => props.gap || 0}px;
 `;
-export const FlexRow = styled.View`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-`;
+
 export const ScrollView = styled.ScrollView`
     width: 100%;
     height: 100%;
