@@ -5,7 +5,8 @@ const TABLE_NAME = "race_records";
 
 export async function getRaceRecords(db: SQLiteDatabase) {
     return db.getAllAsync<RaceRecord[]>(`SELECT *
-                                         FROM ${TABLE_NAME}`);
+                                         FROM ${TABLE_NAME}
+                                         order by created_at desc`);
 }
 
 export async function getRaceRecord(db: SQLiteDatabase, id: number) {
