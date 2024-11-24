@@ -6,8 +6,10 @@ import {Dispatch} from "react";
 import {Text, VirtualizedList} from "react-native";
 import {GeoLocation} from "@app/types/geoResponseType";
 import {Modal, Portal} from 'react-native-paper';
+import {useTranslation} from "react-i18next";
 
 export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalProps) {
+    const {t} = useTranslation();
     const isModalVisible = useCalcPriceStore((state) => state.flow.modalVisible);
     const setModalVisible = useCalcPriceStore((state) => state.setModalVisible);
     const closeWithoutSelection = useCalcPriceStore((state) => state.closeWithoutSelection);
@@ -33,7 +35,7 @@ export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalPr
                     closeWithoutSelection();
                 }}
             >
-                <ModalTitle>Selecione um endereço:</ModalTitle>
+                <ModalTitle>{t('select_address')}:</ModalTitle>
                 <VirtualizedList
                     data={results}
                     initialNumToRender={6}

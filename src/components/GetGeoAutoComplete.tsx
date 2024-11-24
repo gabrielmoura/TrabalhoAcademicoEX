@@ -9,6 +9,7 @@ import {ActivityIndicator, TouchableOpacity} from 'react-native';
 import {ConfigStore} from "@app/store/slice/config";
 import useCalcPriceStore from "@app/store/calcPriceFlow";
 import {GeoSelectionModal} from "@screens/GeoSelectModal";
+import {useTranslation} from "react-i18next";
 
 
 // Props para o componente de auto-complete de geolocalização
@@ -21,6 +22,7 @@ interface GeoAutoCompleteProps {
 export function GetGeoAutoComplete({placeholder, onSelectResult}: GeoAutoCompleteProps) {
     const apiKey = useSessionStore((state: ConfigStore) => state.ApiKey); // Obter chave da API do store
     const [searchText, setSearchText] = useState<string>(''); // Texto de entrada do usuário
+    const {t} = useTranslation();
 
 
     // const [normalFlow, setNormalFlow] = useState<boolean>(true); // Fluxo normal de busca
@@ -48,7 +50,7 @@ export function GetGeoAutoComplete({placeholder, onSelectResult}: GeoAutoComplet
             <Input
                 onChangeText={text => setSearchText(text)}
                 value={searchText}
-                placeholder={placeholder || 'Digite o endereço'}
+                placeholder={placeholder || t('enter_address')}
                 textContentType="streetAddressLine1"
             />
             <TouchableOpacity onPress={() => {

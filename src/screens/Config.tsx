@@ -3,7 +3,7 @@ import useSessionStore from "@app/store/sessionStore";
 import {Modal, Portal} from 'react-native-paper';
 
 
-import {ControlForm, Flex, Input, Label, ScrollView} from "@components/Common";
+import {ControlForm, Flex, Label, ScrollView} from "@components/Common";
 import {ConfigStore, TaxToCalc} from "@app/store/slice/config";
 import {Button} from "@components/Button";
 import styled from "@emotion/native";
@@ -12,6 +12,8 @@ import {flushDb} from "@app/services/raceRecord";
 import {useSQLiteContext} from "expo-sqlite";
 import {useTranslation} from "react-i18next";
 import {Dispatch, useState} from "react";
+import {languages} from "@app/util/languages";
+import {NumberInput, TextInput} from "@components/CommonInput";
 
 const ContainerButton = styled.View`
     display: flex;
@@ -28,10 +30,6 @@ export function ConfigPage() {
     const db = useSQLiteContext();
     const clientQuery = useQueryClient();
     const [showLanguage, setShowLanguage] = useState(false);
-    const setModel = useSessionStore((state: ConfigStore) => state.setModel);
-    const model = useSessionStore((state: ConfigStore) => state.model);
-    const setYear = useSessionStore((state: ConfigStore) => state.setYear);
-    const year = useSessionStore((state: ConfigStore) => state.year);
 
     const setBaseAm = useSessionStore((state: ConfigStore) => state.setBaseAm);
     const setBasePm = useSessionStore((state: ConfigStore) => state.setBasePm);
@@ -65,58 +63,52 @@ export function ConfigPage() {
         <ScrollView>
             <Flex direction='column' justify='space-between'>
                 <Text>Config Page</Text>
-                <Text>Modelo: {model}</Text>
-                <Text>Ano: {year}</Text>
 
 
                 <ControlForm>
-                    <Label>Modelo</Label>
-                    <Input
-                        onChangeText={text => setModel(text)}
-                        value={model}
-                        placeholder={"Model"}
-                    />
-                    <Label>Ano</Label>
-                    <Input placeholder={"Year"} keyboardType={'numeric'}
-                           onChangeText={text => setYear(Number(text.replace(/[^0-9]/g, '')))}
-                           value={year?.toString()}
-                    />
-                    <Label>Cor</Label>
-                    <Input placeholder={"Color"}/>
-                </ControlForm>
-                <ControlForm>
-                    <Label>Chave de acesso</Label>
-                    <Input placeholder={"Chave de acesso"}
-                           onChangeText={text => setApiKey(text)}
-                           value={apiKey}
+                    <Label>{t('access_key')}</Label>
+                    <TextInput
+                        placeholder={t('access_key')}
+                        defaultValue={apiKey}
+                        onValueChange={setApiKey}
                     />
                 </ControlForm>
+
                 <ControlForm>
-                    <Label>Taxa base de Dia</Label>
-                    <Input placeholder={"Taxa base de Dia"} keyboardType={'decimal-pad'}
-                           onChangeText={text => setBaseAm(Number(text))}
-                           value={tax?.Am?.base?.toFixed(2)}
+                    <Label>{t('day_base_rate')}</Label>
+                    <NumberInput
+                        language='en'
+                        defaultValue={tax?.Am?.base}
+                        onValueChange={setBaseAm}
+                        placeholder={t('day_base_rate')}
                     />
 
-                    <Label>Taxa base de Noite</Label>
-                    <Input placeholder={"Taxa base de Noite"} keyboardType={'decimal-pad'}
-                           onChangeText={text => setBasePm(Number(text))}
-                           value={tax?.Pm?.base?.toFixed(2)}
+
+                    <Label>{t('night_base_rate')}</Label>
+                    <NumberInput
+                        language='en'
+                        defaultValue={tax?.Pm?.base}
+                        onValueChange={setBasePm}
+                        placeholder={t('night_base_rate')}
                     />
 
 
                     {/*Space*/}
 
-                    <Label>Preço por Km de Dia</Label>
-                    <Input placeholder={"Taxa base de Dia"} keyboardType={'decimal-pad'}
-                           onChangeText={text => setKmPriceAm(Number(text))}
-                           value={tax?.Am?.kmPrice?.toFixed(2)}
+                    <Label>{t('day_km_rate')}</Label>
+                    <NumberInput
+                        language='en'
+                        defaultValue={tax?.Am?.kmPrice}
+                        onValueChange={setKmPriceAm}
+                        placeholder={t('day_km_rate')}
                     />
 
-                    <Label>Preço por Km de Noite</Label>
-                    <Input placeholder={"Taxa base de Dia"} keyboardType={'decimal-pad'}
-                           onChangeText={text => setKmPricePm(Number(text))}
-                           value={tax?.Pm?.kmPrice?.toFixed(2)}
+                    <Label>{t('night_km_rate')}</Label>
+                    <NumberInput
+                        language='en'
+                        defaultValue={tax?.Pm?.kmPrice}
+                        onValueChange={setKmPricePm}
+                        placeholder={t('night_km_rate')}
                     />
 
                 </ControlForm>
@@ -146,11 +138,7 @@ function SelectLanguage({visible = false, onDismiss}: SelectLanguageProps) {
     const {t} = useTranslation();
     const setLanguage = useSessionStore((state: ConfigStore) => state.setLanguage);
 
-    const languages = [
-        {label: "Português", value: "pt"},
-        {label: "English", value: "en"},
-        {label: "Español", value: "es"},
-    ];
+
     return (
         <Portal>
             <Modal visible={visible} contentContainerStyle={{backgroundColor: 'white', padding: 20}}

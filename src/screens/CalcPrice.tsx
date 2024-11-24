@@ -9,6 +9,7 @@ import {Button} from "@components/Button";
 import {Alert} from "react-native";
 import useCalcPriceStore from "@app/store/calcPriceFlow";
 import {DistanceResponse} from "@app/types/distanceResponseType";
+import {useTranslation} from "react-i18next";
 
 
 // Layout Components
@@ -96,6 +97,7 @@ export function PriceCalculator() {
     const estimatedTime = useCalcPriceStore((state) => state.estimatedTime);
     const setEstimatedTime = useCalcPriceStore((state) => state.setEstimatedTime);
     const resetFlow = useCalcPriceStore((state) => state.resetFlow);
+    const {t} = useTranslation();
     // const [distance, setDistance] = useState<number>(0);
     // const [estimatedTime, setEstimatedTime] = useState<string>("");
 
@@ -125,19 +127,19 @@ export function PriceCalculator() {
 
     return (
         <Container>
-            <Title>Calculadora de Preços</Title>
+            <Title>{t('price_calculator')}</Title>
 
             {/* Show selected locations */}
-            <Subtitle>Origem: {origin?.formatted?.trim() || "Não selecionado"}</Subtitle>
-            <Subtitle>Destino: {destination?.formatted?.trim() || "Não selecionado"}</Subtitle>
+            <Subtitle>{t('origin')}: {origin?.formatted?.trim() || t('not_selected')}</Subtitle>
+            <Subtitle>{t('destination')}: {destination?.formatted?.trim() || t('not_selected')}</Subtitle>
 
             <Form>
                 {/* Input for origin */}
                 {!origin && (
                     <>
-                        <InputLabel>Endereço de Origem</InputLabel>
+                        <InputLabel>{t('origin_address')}</InputLabel>
                         <GetGeoAutoComplete
-                            placeholder="Digite o endereço de origem"
+                            placeholder={t('enter_origin_address')}
                             onSelectResult={setOrigin}
                         />
                     </>
@@ -146,9 +148,9 @@ export function PriceCalculator() {
                 {/* Input for destination */}
                 {!destination && (
                     <>
-                        <InputLabel>Endereço de Destino</InputLabel>
+                        <InputLabel>{t('destination_address')}</InputLabel>
                         <GetGeoAutoComplete
-                            placeholder="Digite o endereço de destino"
+                            placeholder={t('enter_destination_address')}
                             onSelectResult={setDestination}
                         />
                     </>
@@ -156,12 +158,12 @@ export function PriceCalculator() {
 
                 <ContainerButton>
                     <Button onPress={() => processDistance()} size={'large'}
-                            title="Calcular"
+                            title={t('calculate')}
                             loading={calculateRoute.isPending}
                             disabled={!origin || !destination}>
                     </Button>
                     <Button onPress={() => resetFlow()} size={'large'}
-                            title="Limpar"
+                            title={t('clear')} variant={'warning'}
                     >
                     </Button>
                 </ContainerButton>
@@ -169,14 +171,13 @@ export function PriceCalculator() {
                 {/* Display results */}
                 {calculateRoute.isSuccess && (
                     <>
-                        <Result>Preço Estimado: R$ {calculatePrice(distance, taxConfig)?.toFixed(2)}</Result>
-                        <Result>Tempo Estimado: {estimatedTime}</Result>
-                        <Result>Distância: {distance}m</Result>
+                        <Result>{t('estimated_price')}: {t('currency')} {calculatePrice(distance, taxConfig)?.toFixed(2)}</Result>
+                        <Result>{t('estimated_time')}: {estimatedTime}</Result>
+                        <Result>{t('distance')}: {distance}m</Result>
                     </>
                 )}
                 {calculateRoute.isError && (
-                    <ResultError>Erro ao
-                        calcular: {calculateRoute.error.toString()}</ResultError>
+                    <ResultError>{t('calculation_error')}: {calculateRoute.error.toString()}</ResultError>
                 )}
             </Form>
         </Container>

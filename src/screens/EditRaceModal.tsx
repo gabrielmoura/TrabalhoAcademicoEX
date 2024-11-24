@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from "react-native";
 import {Button} from "@components/Button";
 import {NumberInput, TextArea, TextInput} from "@components/CommonInput";
+import {useTranslation} from "react-i18next";
 
 export function EditRaceModal() {
     const db = useSQLiteContext();
@@ -27,6 +28,7 @@ function FormRace({data, id}) {
     if (data?.id !== id) {
         return <Text style={styles.textError}>Registro não encontrado</Text>
     }
+    const {t} = useTranslation();
     const clientQuery = useQueryClient()
     const db = useSQLiteContext();
     const navigator = useNavigation();
@@ -66,37 +68,38 @@ function FormRace({data, id}) {
     })
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Editar registro de corrida</Text>
+            <Text style={styles.title}>{t('edit_record_race')}</Text>
             {mut.isError && <Text style={styles.textError}>{mut.error?.toString()}</Text>}
 
-            <NumberInput onValueChange={setDistance} placeholder="Distância (metros)" prefix='Distância'
+            <NumberInput onValueChange={setDistance} placeholder={t('distance_meters')} prefix={t('distance')}
                          defaultValue={distance}/>
 
-            <NumberInput onValueChange={setTime} placeholder="Tempo (segundos)" prefix='Tempo' defaultValue={time}/>
+            <NumberInput onValueChange={setTime} placeholder={t('time_seconds')} prefix={t('time_label')}
+                         defaultValue={time}/>
 
-            <NumberInput onValueChange={setPrice} prefix='R$' defaultValue={price}/>
+            <NumberInput onValueChange={setPrice} prefix={t('currency')} defaultValue={price}/>
 
             <TextInput
-                placeholder="Origem"
+                placeholder={t('origin')}
                 onValueChange={setOrigin}
                 defaultValue={origin}
             />
 
             <TextInput
-                placeholder="Destino"
+                placeholder={t('destination')}
                 onValueChange={setDestination}
                 defaultValue={destination}
             />
 
-            <TextArea numberOfLines={4} placeholder='Notas' onValueChange={setNotes} defaultValue={notes}/>
+            <TextArea numberOfLines={4} placeholder={t('note_label')} onValueChange={setNotes} defaultValue={notes}/>
 
             <View style={styles.containerButtons}>
                 {mut?.isPending ? <ActivityIndicator color="#000"/> : (<>
-                    <Button title="Salvar"
+                    <Button title={t('save')}
                             onPress={() => mut.mutate()}/>
-                    <Button title="Cancelar"
+                    <Button title={t('cancel')}
                             onPress={() => navigator.goBack()} style={styles.cancelButton}/>
-                    <Button title="Deletar"
+                    <Button title={t('delete')}
                             variant='warning'
                             onPress={() => deleteMutation.mutate()}/>
                 </>)}

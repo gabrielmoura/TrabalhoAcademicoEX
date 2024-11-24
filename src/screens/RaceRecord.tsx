@@ -6,6 +6,7 @@ import {getRaceRecords} from "@app/services/raceRecord";
 import {useQuery} from "@tanstack/react-query";
 import {RaceRecord} from "@app/types/RaceRecordType";
 import {formatDateTime} from "@app/util/helper";
+import {useTranslation} from "react-i18next";
 
 const Title = styled.Text`
     font-size: 24px;
@@ -26,6 +27,7 @@ const EmptyMessage = styled.Text`
 
 export function RaceRecordPage() {
     const db = useSQLiteContext();
+    const {t} = useTranslation();
 
     const {data} = useQuery({
         queryKey: ["raceRecords"],
@@ -34,7 +36,7 @@ export function RaceRecordPage() {
 
     return (
         <Container>
-            <Title>Histórico de Corridas</Title>
+            <Title>{t('ride_history_header')}</Title>
             <FlatList
                 data={data}
                 initialNumToRender={6}
@@ -49,6 +51,7 @@ export function RaceRecordPage() {
 
 function CardRecord({item}: { item: RaceRecord }) {
     const navigation = useNavigation();
+    const {t} = useTranslation();
 
     return (
         <TouchableOpacity
@@ -56,11 +59,11 @@ function CardRecord({item}: { item: RaceRecord }) {
         >
             <Card>
                 <CardText>ID: {item.id}</CardText>
-                <CardText>Distância: {item.distance} m</CardText>
-                <CardText>Tempo: {item.time} s</CardText>
-                <CardText>Data: {formatDateTime(item.created_at)}</CardText>
-                <CardText>Preço: R${item.price}</CardText>
-                <CardText>Nota: {item.note}</CardText>
+                <CardText>{t('distance_label')}: {item.distance} m</CardText>
+                <CardText>{t('time_label')}: {item.time} s</CardText>
+                <CardText>{t('date_label')}: {formatDateTime(item.created_at)}</CardText>
+                <CardText>{t('price_label')}: R${item.price}</CardText>
+                <CardText>{t('note_label')}: {item.note}</CardText>
             </Card>
         </TouchableOpacity>
     );

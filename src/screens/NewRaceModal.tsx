@@ -7,12 +7,14 @@ import {insertRaceRecord} from "@app/services/raceRecord";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {RaceRecord} from "@app/types/RaceRecordType";
 import {NumberInput, TextArea, TextInput} from "@components/CommonInput";
+import {useTranslation} from "react-i18next";
 
 
 export function NewRaceModal() {
     const navigator = useNavigation();
     const db = useSQLiteContext();
     const clientQuery = useQueryClient();
+    const {t} = useTranslation();
 
 
     // Estados para armazenar os valores dos campos
@@ -45,35 +47,35 @@ export function NewRaceModal() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Novo registro de corrida</Text>
+            <Text style={styles.title}>{t('new_record_race')}</Text>
             {mut.isError && <Text style={styles.textError}>{mut.error?.toString()}</Text>}
 
 
-            <NumberInput onValueChange={setDistance} placeholder="Distância (metros)" prefix='Distância'/>
+            <NumberInput onValueChange={setDistance} placeholder={t('distance_meters')} prefix={t('distance')}/>
 
-            <NumberInput onValueChange={setTime} placeholder="Tempo (segundos)" prefix='Tempo'/>
+            <NumberInput onValueChange={setTime} placeholder={t('time_seconds')} prefix={t('time_label')}/>
 
-            <NumberInput onValueChange={setPrice} prefix='R$'/>
+            <NumberInput onValueChange={setPrice} prefix={t('currency')}/>
 
             <TextInput
-                placeholder="Origem"
+                placeholder={t('origin')}
                 onValueChange={setOrigin}
 
             />
 
             <TextInput
-                placeholder="Destino"
+                placeholder={t('destination')}
                 onValueChange={setDestination}
 
             />
 
-            <TextArea numberOfLines={4} placeholder='Notas' onValueChange={setNotes}/>
+            <TextArea numberOfLines={4} placeholder={t('note_label')} onValueChange={setNotes}/>
 
             <View style={styles.containerButtons}>
                 {mut?.isPending ? <ActivityIndicator color="#000"/> : (<>
-                    <Button title="Salvar"
+                    <Button title={t('save')}
                             onPress={() => mut.mutate()}/>
-                    <Button title="Cancelar"
+                    <Button title={t('cancel')}
                             onPress={() => navigator.goBack()} style={styles.cancelButton}/>
                 </>)}
 
