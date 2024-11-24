@@ -7,4 +7,5 @@ export interface RaceRecord {
     destination?: string;
     note?: string;
     createdAt?: string;
+    created_at?: Date;
 }

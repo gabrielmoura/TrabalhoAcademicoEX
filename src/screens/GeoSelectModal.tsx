@@ -3,11 +3,11 @@ import useCalcPriceStore from "@app/store/calcPriceFlow";
 
 import styled from "@emotion/native";
 import {Dispatch} from "react";
-import {Modal, Text, VirtualizedList} from "react-native";
+import {Text, VirtualizedList} from "react-native";
 import {GeoLocation} from "@app/types/geoResponseType";
+import {Modal, Portal} from 'react-native-paper';
 
 export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalProps) {
-    // const [isModalVisible, setModalVisible] = useState(true);
     const isModalVisible = useCalcPriceStore((state) => state.flow.modalVisible);
     const setModalVisible = useCalcPriceStore((state) => state.setModalVisible);
     const closeWithoutSelection = useCalcPriceStore((state) => state.closeWithoutSelection);
@@ -25,15 +25,14 @@ export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalPr
     const getItemCount = (data: GeoLocation[]) => data.length;
 
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isModalVisible}
-            onRequestClose={() => {
-                closeWithoutSelection();
-            }}
-        >
-            <ModalContainer>
+        <Portal>
+            <Modal
+                contentContainerStyle={{backgroundColor: 'white', padding: 20, maxHeight: '80%', borderRadius: 10}}
+                visible={isModalVisible}
+                onDismiss={() => {
+                    closeWithoutSelection();
+                }}
+            >
                 <ModalTitle>Selecione um endereço:</ModalTitle>
                 <VirtualizedList
                     data={results}
@@ -46,9 +45,10 @@ export function GeoSelectionModal({results, onSelectResult}: GeoSelectionModalPr
                     keyExtractor={(item, index) => `${item?.plus_code}-${index}`}
                     getItem={getItem}
                     getItemCount={getItemCount}
+
                 />
-            </ModalContainer>
-        </Modal>
+            </Modal>
+        </Portal>
     );
 }
 
@@ -63,16 +63,6 @@ const ModalTitle = styled.Text`
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
-`;
-
-// Estilo para o container principal do modal
-const ModalContainer = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    //padding: 20px;
-    padding: 60% 10%;
 `;
 
 // Item estilizado dentro da lista

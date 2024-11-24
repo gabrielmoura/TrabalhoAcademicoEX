@@ -2,6 +2,8 @@ import styled from "@emotion/native";
 import {useNavigation} from "@react-navigation/native";
 import {LogoIcon} from "@components/LogoIcon";
 import {Button} from "@components/Button";
+import {useTranslation} from "react-i18next";
+import {ScrollView} from "@components/Common";
 
 const Container = styled.View`
     display: flex;
@@ -34,26 +36,36 @@ const Flex = styled.View`
 
 export default function HomeScreen() {
     const navigation = useNavigation();
+    const {t, i18n} = useTranslation();
+
     return (
-        <Flex>
-            <Container>
-                <Description>Taxi Calc</Description>
-                <LogoIcon/>
-            </Container>
-            <ButtonContainer>
-                <Button
-                    title="Configurações"
-                    onPress={() => navigation.navigate("Config")}
-                />
-                <Button
-                    title="Calcular Preço"
-                    onPress={() => navigation.navigate("CalcPrice")}
-                />
-                <Button
-                    title="Histórico de Corridas"
-                    onPress={() => navigation.navigate("RaceRecord")}
-                />
-            </ButtonContainer>
-        </Flex>
+        <ScrollView>
+            <Flex>
+                <Container>
+                    <Description>Taxi Calc</Description>
+                    <LogoIcon/>
+                </Container>
+
+
+                <ButtonContainer>
+                    <Button
+                        title={t('settings')}
+                        size="large"
+                        onPress={() => navigation.navigate("Config")}
+                    />
+                    <Button
+                        title={t('calculate_price')}
+                        size="large"
+                        onPress={() => navigation.navigate("CalcPrice")}
+                    />
+                    <Button
+                        title={t('ride_history')}
+                        size="large"
+                        onPress={() => navigation.navigate("RaceRecord")}
+                    />
+                </ButtonContainer>
+
+            </Flex>
+        </ScrollView>
     );
 }

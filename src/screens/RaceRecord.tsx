@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import styled, {css} from "@emotion/native";
 import {FlatList, Text, TouchableOpacity} from "react-native";
 import {useSQLiteContext} from "expo-sqlite";
@@ -6,6 +5,7 @@ import {useNavigation} from "@react-navigation/native";
 import {getRaceRecords} from "@app/services/raceRecord";
 import {useQuery} from "@tanstack/react-query";
 import {RaceRecord} from "@app/types/RaceRecordType";
+import {formatDateTime} from "@app/util/helper";
 
 const Title = styled.Text`
     font-size: 24px;
@@ -58,7 +58,7 @@ function CardRecord({item}: { item: RaceRecord }) {
                 <CardText>ID: {item.id}</CardText>
                 <CardText>Distância: {item.distance} m</CardText>
                 <CardText>Tempo: {item.time} s</CardText>
-                <CardText>Data: {item.createdAt?.toString()}</CardText>
+                <CardText>Data: {formatDateTime(item.created_at)}</CardText>
                 <CardText>Preço: R${item.price}</CardText>
                 <CardText>Nota: {item.note}</CardText>
             </Card>

@@ -1,13 +1,17 @@
 import {Alert, Text} from "react-native";
 import useSessionStore from "@app/store/sessionStore";
+import {Modal, Portal} from 'react-native-paper';
 
-import {ControlForm, FlexCol, Input, Label, ScrollView} from "@components/Common";
+
+import {ControlForm, Flex, Input, Label, ScrollView} from "@components/Common";
 import {ConfigStore, TaxToCalc} from "@app/store/slice/config";
-import {Button, ButtonDanger} from "@components/Button";
+import {Button} from "@components/Button";
 import styled from "@emotion/native";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {flushDb} from "@app/services/raceRecord";
 import {useSQLiteContext} from "expo-sqlite";
+import {useTranslation} from "react-i18next";
+import {Dispatch, useState} from "react";
 
 const ContainerButton = styled.View`
     display: flex;
@@ -15,7 +19,7 @@ const ContainerButton = styled.View`
     justify-content: center;
     align-items: center;
     width: 100%;
-    gap: 12px;
+    gap: 10px;
     padding-top: 10%;
     padding-bottom: 10%;
 `;
@@ -23,6 +27,7 @@ const ContainerButton = styled.View`
 export function ConfigPage() {
     const db = useSQLiteContext();
     const clientQuery = useQueryClient();
+    const [showLanguage, setShowLanguage] = useState(false);
     const setModel = useSessionStore((state: ConfigStore) => state.setModel);
     const model = useSessionStore((state: ConfigStore) => state.model);
     const setYear = useSessionStore((state: ConfigStore) => state.setYear);
@@ -39,6 +44,7 @@ export function ConfigPage() {
 
     const tax: TaxToCalc = useSessionStore((state: ConfigStore) => state.Tax!);
     const resetToDefault = useSessionStore((state: ConfigStore) => state.resetToDefault);
+    const {t, i18n} = useTranslation();
 
 
     const flushDB = useMutation({
@@ -52,12 +58,12 @@ export function ConfigPage() {
 
     function handleFlushDB() {
         flushDB.mutate()
-        Alert.alert("Sucesso", 'Banco de dados deletado com sucesso')
+        Alert.alert(t("success"), t('success_content_1'))
     }
 
     return (
         <ScrollView>
-            <FlexCol>
+            <Flex direction='column' justify='space-between'>
                 <Text>Config Page</Text>
                 <Text>Modelo: {model}</Text>
                 <Text>Ano: {year}</Text>
@@ -115,14 +121,61 @@ export function ConfigPage() {
 
                 </ControlForm>
 
+                <SelectLanguage visible={showLanguage} onDismiss={setShowLanguage}/>
+                <Button title={t('change_language')} onPress={() => setShowLanguage(old => !old)}/>
+
+
                 <ContainerButton>
-                    <Button title={"Restaurar Padrão"} onPress={() => resetToDefault()}/>
-                    <ButtonDanger title={"Deletar Banco"} onLongPress={() => handleFlushDB()}
-                                  onPress={() => Alert.alert("Aviso", "Segure o botão para deletar o banco de dados.\nEsta ação não pode ser desfeita.")}
+                    <Button title={t('restore_default')} onPress={() => resetToDefault()}/>
+                    <Button variant="warning" title={t('delete_db')} onLongPress={() => handleFlushDB()}
+                            onPress={() => Alert.alert(t('notice'), t('notice_content_1'))}
                     />
                 </ContainerButton>
 
-            </FlexCol>
+            </Flex>
         </ScrollView>
     );
 }
+
+interface SelectLanguageProps {
+    visible: boolean;
+    onDismiss?: Dispatch<any>
+}
+
+function SelectLanguage({visible = false, onDismiss}: SelectLanguageProps) {
+    const {t} = useTranslation();
+    const setLanguage = useSessionStore((state: ConfigStore) => state.setLanguage);
+
+    const languages = [
+        {label: "Português", value: "pt"},
+        {label: "English", value: "en"},
+        {label: "Español", value: "es"},
+    ];
+    return (
+        <Portal>
+            <Modal visible={visible} contentContainerStyle={{backgroundColor: 'white', padding: 20}}
+                   onDismiss={() => onDismiss && onDismiss(false)}>
+                <TitleModal>{t('select_language')}</TitleModal>
+                <ModalList data={languages} renderItem={({item}) => (
+                    <ModalListItem>
+                        <Button title={item.label} onPress={() => setLanguage(item.value)}/>
+                    </ModalListItem>
+                )}
+                           keyExtractor={(item) => item.value}
+                />
+            </Modal>
+        </Portal>
+    )
+}
+
+const TitleModal = styled.Text`
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+`;
+const ModalList = styled.FlatList`
+    width: 100%;
+`;
+const ModalListItem = styled.View`
+    margin-bottom: 10px;
+`;
